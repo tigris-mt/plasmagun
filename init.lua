@@ -40,9 +40,14 @@ function plasmagun.register(name, d)
         on_refill = technic.refill_RE_charge,
 
         on_use = function(itemstack, user)
+            local meta = minetest.deserialize(itemstack:get_metadata()) or {}
+            -- Handle timer.
+            meta.timer = meta.timer or 0
+            if minetest.get_gametime() - meta.timer < d.delay then
+                return
+            end
             -- Handle charge.
-            local meta = minetest.deserialize(itemstack:get_metadata())
-            if not meta or not meta.charge then
+            if not meta.charge then
                 return
             end
             if meta.charge < per_shot then
@@ -50,6 +55,8 @@ function plasmagun.register(name, d)
             end
             meta.charge = meta.charge - per_shot
             technic.set_RE_wear(itemstack, meta.charge, plasmagun.max_charge)
+
+            meta.timer = minetest.get_gametime()
             itemstack:set_metadata(minetest.serialize(meta))
 
             -- Launch projectile for each ray.
@@ -58,7 +65,7 @@ function plasmagun.register(name, d)
                 -- Apply spread.
                 dir = vector.add(dir, vector.new(math.random() * d.spread - d.spread / 2, 0, math.random() * d.spread - d.spread / 2))
                 -- Create projectile.
-                tigris.create_projectile(p, {
+                local o = tigris.create_projectile(p, {
                     -- Launch from eye height.
                     pos = vector.add(user:getpos(), vector.new(0, user:get_properties().eye_height or 1.625, 0)),
                     velocity = dir,
@@ -66,8 +73,14 @@ function plasmagun.register(name, d)
                     gravity = 0.1,
                     owner = user:get_player_name(),
                     owner_object = user,
-                }):get_luaentitiy()._plasmagun = true
+                })
+                -- Plasma flag.
+                if o then
+                    o:get_luaentity()._plasmagun = true
+                end
             end
+
+            return itemstack
         end,
     })
 end
@@ -82,6 +95,7 @@ plasmagun.register("plasmagun:rifle", {
     time = 2,
     damage = 10,
     shots = 80,
+    delay = 1,
 })
 
 -- Multiple bullets, short range.
@@ -94,6 +108,7 @@ plasmagun.register("plasmagun:shotgun", {
     time = 1,
     damage = 4,
     shots = 70,
+    delay = 2,
 })
 
 -- Brass barrel, obsidian and diamond focus, carbon steel trigger.
