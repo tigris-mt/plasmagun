@@ -1,3 +1,5 @@
+plasmagun = {}
+
 -- Register plasma gun.
 function plasmagun.register(name, d)
     -- Plasma projectile name.
