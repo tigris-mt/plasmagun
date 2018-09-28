@@ -1,7 +1,3 @@
-plasmagun = {
-    max_charge = 100000,
-}
-
 -- Register plasma gun.
 function plasmagun.register(name, d)
     -- Plasma projectile name.
@@ -26,10 +22,10 @@ function plasmagun.register(name, d)
     })
 
     -- Calculate charge taken per shot.
-    local per_shot = plasmagun.max_charge / d.shots
+    local per_shot = d.max_charge / d.shots
 
     -- Register gun.
-    technic.register_power_tool(name, plasmagun.max_charge)
+    technic.register_power_tool(name, d.max_charge)
     minetest.register_tool(name, {
         description = d.description,
         inventory_image = d.image,
@@ -53,7 +49,7 @@ function plasmagun.register(name, d)
                 return
             end
             meta.charge = meta.charge - per_shot
-            technic.set_RE_wear(itemstack, meta.charge, plasmagun.max_charge)
+            technic.set_RE_wear(itemstack, meta.charge, d.max_charge)
 
             meta.timer = minetest.get_gametime()
             itemstack:set_metadata(minetest.serialize(meta))
@@ -88,6 +84,7 @@ end
 plasmagun.register("plasmagun:rifle", {
     description = "Plasma rifle",
     image = "plasmagun_rifle.png",
+    max_charge = 100000,
     speed = 20,
     spread = 0,
     rays = 1,
@@ -101,6 +98,7 @@ plasmagun.register("plasmagun:rifle", {
 plasmagun.register("plasmagun:shotgun", {
     description = "Plasma shotgun",
     image = "plasmagun_shotgun.png",
+    max_charge = 100000,
     speed = 10,
     spread = 1,
     rays = 4,
