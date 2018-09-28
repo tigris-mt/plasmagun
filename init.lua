@@ -1,6 +1,5 @@
 plasmagun = {
-    -- 2x MkII laser charge.
-    max_charge = 400000,
+    max_charge = 100000,
 }
 
 -- Register plasma gun.
