@@ -14,7 +14,7 @@ function plasmagun.register(name, d)
             return true
         end,
         on_entity_hit = function(self, obj)
-            if obj.get_luaentity() and obj:get_luaentity() and obj:get_luaentity().name == "__builtin:item" then
+            if obj.get_luaentity and obj:get_luaentity() and obj:get_luaentity().name == "__builtin:item" then
                 return true
             end
             -- Don't hit other plasma bullets of our owner.
